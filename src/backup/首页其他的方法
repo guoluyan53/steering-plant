@@ -1,0 +1,69 @@
+//换一换-----视频调阅
+    change(){
+        if(this.qList.length > 4 && this.qList.length > this.num){
+            //点击的时候获取分为几组
+            this.listlen();
+            //每点击一次记录点击次数
+            this.autoIncre();
+            this.clear();
+            this.renderR();
+        }
+    },
+    //计算数据的长度，共分为几组，如果不能整除则加1
+    listlen(){
+        var len = this.qList.length;
+        this.group = len/this.num;
+        if(len % this.num!=0){
+            this.group = parseInt(this.group) +1;
+        }
+    },
+    //计算将点击次数开始截取的参数清空，如果点击此时大于当前数据的组数，则重新开始计数。
+    claer(){
+        if(this.clickNum > this.group - 1){
+            this.timeStart = 0;
+            this.timeEnd = 1;
+            this.clickNum = 0;
+        }
+    },
+    //每点击一次，记录次数
+    autoIncre(){
+        this.clickNum++;
+        this.timeStart++;
+        this.timeEnd++;
+    },
+    //截取当前每组的数据
+    renderR(){
+        this.newList = this.qList.slice(
+            this.num * this.timeStart,
+            this.num * this.timeEnd
+        );
+        console.log(this.newList)
+    },
+    //获取总数据-----axios
+    created(){
+        let params = {
+            keyword:""
+        };
+        this.$http("get","/XXX/XXX",params)
+         .then(res =>{
+             var data = res.data.data;
+             this.qList = data;
+             this.renderR();
+         })
+         .catch(err=>{
+
+         });
+
+
+
+
+
+
+          //换一换数据
+          qList:[],
+          newList:[],  //处理后的list
+          timeStart:0,  //截取第几组的开始参数
+          timeEnd:1,  //截取第几组结束参数
+          group:0,  //默认为0组
+          num:3,  //一次展示list的数量
+          clickNum:0,  //点击的次数
